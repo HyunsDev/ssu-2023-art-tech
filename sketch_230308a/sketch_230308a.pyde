@@ -1,0 +1,18 @@
+size(900, 900)
+
+fill(-1)
+strokeWeight(1.0)
+stroke(0)
+pushMatrix()
+translate(344.3098, 347.1022)
+rotate(0.0)
+ellipse(0,0,365.47034, 365.47034)
+popMatrix()
+
+strokeWeight(1.0)
+stroke(0)
+line(382.24448, 649.5258, 695.2055, 322.86618)
+fill(-1)
+stroke(0)
+strokeWeight(1.0)
+bezier(502.3709, 732.77136, 567.7031, 574.7102, 759.4839, 695.8903, 795.31104, 499.8946)
