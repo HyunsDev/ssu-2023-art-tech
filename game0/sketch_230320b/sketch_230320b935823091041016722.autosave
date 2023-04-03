@@ -5,7 +5,7 @@ BAR_SIZE = 200
 BRICKS_ROW = 10
 BRICKS_COLUMN = 4  
 
-x, y = 400, 350
+x, y = 100, 100
 ball_color = '#000000'
 dirxX = 'right'
 dirxY = 'bottom'
@@ -54,34 +54,14 @@ def draw():
     if y < 0 + BALL_SIZE / 2 and dirxY == 'top': dirxY = 'bottom'
     if y > 600 - BALL_SIZE / 2 and dirxY == 'bottom':
         print('GAME OVER')
-        
+    
     # collision detection
     i = 0
     for brick in bricks:
-        if (brick[0] <= x + BALL_SIZE / 2 and brick[2] >= x - BALL_SIZE / 2
-            and brick[1] <= y + BALL_SIZE / 2 and brick[3] >= y - BALL_SIZE / 2
-                ):
-            
-            # collision 
-            left_distance = x + BALL_SIZE - brick[0]
-            right_distance = -(x - BALL_SIZE - brick[2])
-            top_distance = y + BALL_SIZE - brick[1]
-            bottom_distance = -(y - BALL_SIZE - brick[3])
-            min_distance = min(left_distance, right_distance, top_distance, bottom_distance)
-            
-            if min_distance == left_distance:
-                dirxX = 'left'
-            elif min_distance == right_distance:
-                dirxX = 'right'
-            elif min_distance == top_distance:
-                dirxY = 'top'
-            elif min_distance == bottom_distance:
-                dirxY = 'bottom'
-            
-            
-            
-            del bricks[i]
-            break
+        print(brick)
+        
+        if brick[0] >= x - BALL_SIZE and brick[2] <= x + BALL_SIZE and brick[1] >= y + BALL_SIZE and brick[3] <= y - BALL_SIZE:
+            print(f"collision {i}")
             
         i += 1
             
