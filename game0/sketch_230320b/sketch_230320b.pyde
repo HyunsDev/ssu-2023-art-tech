@@ -78,16 +78,11 @@ def draw():
             elif min_distance == bottom_distance:
                 dirxY = 'bottom'
             
-            
-            
             del bricks[i]
             break
             
         i += 1
             
-        
-        
-        
     # detact Bar
     _bar_left = mouseX - BAR_SIZE / 2
     _bar_right = mouseX + BAR_SIZE / 2
@@ -108,7 +103,6 @@ def mouseClicked():
     dirxX = 'right'
     dirxY = 'bottom'
 
-    
 def drawBar():
     stroke('#000000')
     strokeWeight(4)

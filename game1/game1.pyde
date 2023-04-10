@@ -9,4 +9,7 @@ def setup():
 
 
 def draw():
-    game.drawFrame()
+    game.draw()
+
+def mousePressed():
+    game.mousePressEvent(mouseX, mouseY)

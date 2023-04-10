@@ -1,14 +1,15 @@
 import const
+from object import Entity
 
-class Bar:
-    def __init__(self, x = const.SCREEN_WIDTH / 2, y =const.SCREEN_HEIGHT - 50, width = 100, height = 4):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+class Bar(Entity):
+    def __init__(self, x = const.SCREEN_WIDTH / 2, y = const.SCREEN_HEIGHT - 50, width = 150, height = 10, color = '#000000', **kwargs):
+        super(Bar, self).__init__(x, y, width, height, color, **kwargs)
         pass
 
     def draw(self):
-        stroke('#000000')
-        strokeWeight(4)
-        line(self.x - self.width / 2, self.y, self.x + self.width / 2, self.y)
+        fill('#000000')
+        rect(self.x, self.y, self.width, self.height)
+
+    def move(self):
+        # Mouse Event
+        self.x = mouseX - self.width / 2
