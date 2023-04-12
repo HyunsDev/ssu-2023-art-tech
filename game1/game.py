@@ -1,5 +1,5 @@
 import const
-from bar import Bar 
+from bar import Bar
 from ball import Ball
 from brick import createBrickMap, createBlockMapByMap, Brick
 from object import Object
@@ -7,12 +7,14 @@ from atom import Atom
 from event import GameOverEvent, MouseClickEvent
 
 blockMap = [
-    ['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
-    ['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
-    ['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
-    ['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
-    ['w', 'w', 'w', 'w', 'b', 'b', 'w', 'w', 'w', 'w'],
+    [" ", "1", "1", " ", " ", "1", "1", " "],
+    [" ", "1", "1", " ", " ", "1", "1", " "],
+    [" ", " ", " ", "1", "1", " ", " ", " "],
+    [" ", " ", "a", "1", "1", "a", " ", " "],
+    [" ", " ", "a", " ", " ", "a", " ", " "],
 ]
+
+
 class Game(Atom):
     def __init__(self):
         super(Game, self).__init__(self)
@@ -20,12 +22,13 @@ class Game(Atom):
 
         self.blocks = []
         self.entities = []
-        self.balls = [ Ball(const.SCREEN_WIDTH / 3) ]
+        self.balls = [Ball(const.SCREEN_WIDTH / 3)]
         self.bar = Bar()
 
-        self.addEventListener('ballDeath', self.__ballDeathEventHandler)
-        self.addEventListener('gameOver', self.__gameOverEventHandler)
-        self.addEventListener('mouseClick', self.__mousePressEventHandler)
+        self.addEventListener("ballDeath", self.__ballDeathEventHandler)
+        self.addEventListener("gameOver", self.__gameOverEventHandler)
+        self.addEventListener("brickDeath", self.__brickDeathEventHandler)
+        self.addEventListener("itemCreated", self.__itemCreatedEventHandler)
 
     # Initialize Game
     # Execute In setup() Function
@@ -81,11 +84,14 @@ class Game(Atom):
             self.game.dispatchEvent(GameOverEvent())
 
     def __gameOverEventHandler(self, event):
-        print('Game Over')
-    
-    def __mousePressEventHandler(self, event):
-        print(event.x, event.y, event.type)
-        self.blocks.append(Brick(event.x, event.y, 50, 50, '#000000'))
+        print("Game Over")
+
+    def __brickDeathEventHandler(self, event):
+        self.blocks.remove(event.object)
+
+    def __itemCreatedEventHandler(self, event):
+        print(event.item)
+        self.entities.append(event.item)
 
     # Outer Event
     def mousePressEvent(self, x, y):
