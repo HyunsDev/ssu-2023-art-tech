@@ -1,5 +1,6 @@
 from event import CollisionEvent
 from atom import Atom
+import const
 
 
 # Abstract Class
@@ -38,6 +39,13 @@ class Object(Atom):
     def draw(self):
         pass
 
+    def drawHitbox(self):
+        hitbox = self.getHitbox()
+        noFill()
+        stroke("#ff0000")
+        strokeWeight(1)
+        rect(hitbox["x"], hitbox["y"], hitbox["width"], hitbox["height"])
+
     def getHitbox(self):
         return {"x": self.x, "y": self.y, "width": self.width, "height": self.height}
 
@@ -45,13 +53,16 @@ class Object(Atom):
     def __getIsCollision(object1, object2):
         object1Hitbox = object1.getHitbox()
         object2Hitbox = object2.getHitbox()
+
         if (
-            object2Hitbox["x"] <= object1Hitbox["x"] + object1Hitbox["width"] / 2
-            and object2Hitbox["x"] + object2Hitbox["width"]
-            >= object1Hitbox["x"] - object1Hitbox["width"] / 2
-            and object2Hitbox["y"] <= object1Hitbox["y"] + object1Hitbox["height"] / 2
-            and object2Hitbox["y"] + object2Hitbox["height"]
-            >= object1Hitbox["y"] - object1Hitbox["height"] / 2
+            # left
+            object2Hitbox["x"] <= object1Hitbox["x"] + object1Hitbox["width"]
+            # right
+            and object2Hitbox["x"] + object2Hitbox["width"] >= object1Hitbox["x"]
+            # top
+            and object2Hitbox["y"] <= object1Hitbox["y"] + object1Hitbox["height"]
+            # bottom
+            and object2Hitbox["y"] + object2Hitbox["height"] >= object1Hitbox["y"]
         ):
             return True
         return False

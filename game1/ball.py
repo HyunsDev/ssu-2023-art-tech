@@ -32,7 +32,9 @@ class Ball(Entity):
     def draw(self):
         fill("#000000")
         strokeWeight(0)
-        ellipse(self.x, self.y, self.width, self.height)
+        ellipse(
+            self.x + self.width / 2, self.y + self.height / 2, self.width, self.height
+        )
 
     def move(self):
         self.x += self.ax

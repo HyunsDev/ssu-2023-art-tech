@@ -22,12 +22,19 @@ class BallDeathEvent(Event):
 class BallCreatedEvent(Event):
     def __init__(self, ball):
         self.type = "ballCreated"
+        self.ball = ball
 
 
 class BrickDeathEvent(Event):
     def __init__(self, brick):
         self.type = "brickDeath"
         self.object = brick
+
+
+class ItemUsedEvent(Event):
+    def __init__(self, item):
+        self.type = "itemUsed"
+        self.item = item
 
 
 class GameOverEvent(Event):

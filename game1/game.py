@@ -29,11 +29,13 @@ class Game(Atom):
         self.addEventListener("gameOver", self.__gameOverEventHandler)
         self.addEventListener("brickDeath", self.__brickDeathEventHandler)
         self.addEventListener("itemCreated", self.__itemCreatedEventHandler)
+        self.addEventListener("ballCreated", self.__ballCreatedEventHandler)
+        self.addEventListener("itemUsed", self.__itemUsedEventHandler)
 
     # Initialize Game
     # Execute In setup() Function
     def init(self):
-        frameRate(60)
+        frameRate(10)
         self.blocks = createBlockMapByMap(blockMap)
 
     # Move & Calc & Draw Object
@@ -42,19 +44,27 @@ class Game(Atom):
         self.__move()
         self.__calc()
         self.__drawFrame()
-        self.__removeDeletedObject()
+        self.__drawHitbox()
 
     # Draw Object, Entity
     def __drawFrame(self):
         background(255)
         map(lambda brick: brick.draw(), self.blocks)
         map(lambda ball: ball.draw(), self.balls)
+        map(lambda entity: entity.draw(), self.entities)
         self.bar.draw()
+
+    def __drawHitbox(self):
+        map(lambda brick: brick.drawHitbox(), self.blocks)
+        map(lambda ball: ball.drawHitbox(), self.balls)
+        map(lambda entity: entity.drawHitbox(), self.entities)
+        self.bar.drawHitbox()
 
     # Move Object
     def __move(self):
         # self.balls.move()
         map(lambda ball: ball.move(), self.balls)
+        map(lambda entity: entity.move(), self.entities)
         self.bar.move()
 
     # Collision Detection
@@ -73,10 +83,6 @@ class Game(Atom):
             # Entity - Bar Collision
             Object.collision(self.game, entity, self.bar)
 
-    def __removeDeletedObject(self):
-        self.blocks = filter(lambda brick: not brick.isDeleted, self.blocks)
-        self.balls = filter(lambda ball: not ball.isDeleted, self.balls)
-
     # Event Handler
     def __ballDeathEventHandler(self, event):
         self.balls.remove(event.object)
@@ -90,8 +96,13 @@ class Game(Atom):
         self.blocks.remove(event.object)
 
     def __itemCreatedEventHandler(self, event):
-        print(event.item)
         self.entities.append(event.item)
+
+    def __ballCreatedEventHandler(self, event):
+        self.balls.append(event.ball)
+
+    def __itemUsedEventHandler(self, event):
+        self.entities.remove(event.item)
 
     # Outer Event
     def mousePressEvent(self, x, y):

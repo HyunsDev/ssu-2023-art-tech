@@ -43,8 +43,8 @@ class ItemBrick(Brick):
         if event.object.__class__.__name__ == "Ball":
             self.life -= 1
             if self.life <= 0:
-                self.game.dispatchEvent(BrickDeathEvent(self))
                 self.game.dispatchEvent(ItemCreatedEvent(self.item))
+                self.game.dispatchEvent(BrickDeathEvent(self))
 
 
 class Wall(Block):

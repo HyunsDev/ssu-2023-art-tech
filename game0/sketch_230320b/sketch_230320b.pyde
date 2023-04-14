@@ -30,10 +30,7 @@ def setup():
             brick = [ ii * brick_size[0], i * brick_size[1], (ii + 1) * brick_size[0], (i + 1) * brick_size[1]]
             print(brick)
             bricks.append(brick)
-            
-    print(bricks)
         
-    
     
 def draw():    
     # Init

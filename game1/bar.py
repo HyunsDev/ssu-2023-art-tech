@@ -17,7 +17,7 @@ class Bar(Entity):
 
     def draw(self):
         fill("#000000")
-        rect(self.x, self.y, self.width, self.height)
+        rect(self.x, self.y, self.width, 5)
 
     def move(self):
         # Mouse Event
