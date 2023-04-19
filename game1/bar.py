@@ -13,12 +13,16 @@ class Bar(Entity):
         **kwargs
     ):
         super(Bar, self).__init__(x, y, width, height, color, **kwargs)
+        self.game.addEventListener("barSizeUp", self._barSizeUpEventHandler)
         pass
 
     def draw(self):
-        fill("#000000")
+        fill("#3A79C4")
         rect(self.x, self.y, self.width, 5)
 
     def move(self):
         # Mouse Event
         self.x = mouseX - self.width / 2
+
+    def _barSizeUpEventHandler(self, event):
+        self.width += 50

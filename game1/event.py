@@ -25,6 +25,19 @@ class BallCreatedEvent(Event):
         self.ball = ball
 
 
+class BarSizeUpEvent(Event):
+    def __init__(self, bar):
+        self.type = "barSizeUp"
+
+
+class BoomEvent(Event):
+    def __init__(self, x, y, size):
+        self.type = "boom"
+        self.x = x
+        self.y = y
+        self.size = size
+
+
 class BrickDeathEvent(Event):
     def __init__(self, brick):
         self.type = "brickDeath"

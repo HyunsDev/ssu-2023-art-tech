@@ -25,13 +25,33 @@ class Ball(Entity):
         self.width = self.size
         self.height = self.size
 
+        self.trajectories = []
+
         self.addEventListener(
             "collision", lambda event: self.__collisionEventHandler(event)
         )
 
     def draw(self):
-        fill("#000000")
-        strokeWeight(0)
+        # Draw Trajectory
+        # c = color()
+        strokeWeight(self.width)
+        beforeTrajectory = (self.x, self.y)
+        for i, trajectory in enumerate(self.trajectories):
+            c = color(58, 121, 196, 255 / (i + 1))
+            stroke(c)
+
+            line(
+                trajectory[0] + self.size / 2,
+                trajectory[1] + self.size / 2,
+                beforeTrajectory[0] + self.size / 2,
+                beforeTrajectory[1] + self.size / 2,
+            )
+            beforeTrajectory = trajectory
+
+        # Draw Ball
+        fill("#10223E")
+        stroke("#3A79C4")
+        strokeWeight(1)
         ellipse(
             self.x + self.width / 2, self.y + self.height / 2, self.width, self.height
         )
@@ -39,6 +59,10 @@ class Ball(Entity):
     def move(self):
         self.x += self.ax
         self.y += self.ay
+
+        self.trajectories.insert(0, (self.x, self.y))
+        if len(self.trajectories) > 30:
+            self.trajectories.pop()
 
         if self.x > const.SCREEN_WIDTH - self.size / 2 and self.ax > 0:
             self.ax = abs(self.ax) * -1

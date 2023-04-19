@@ -1,17 +1,19 @@
 import const
 from bar import Bar
 from ball import Ball
-from brick import createBrickMap, createBlockMapByMap, Brick
+from brick import Brick
 from object import Object
 from atom import Atom
 from event import GameOverEvent, MouseClickEvent
+from window import Window
+from mapLoader import createBlockMapByMap
 
 blockMap = [
-    [" ", "1", "1", " ", " ", "1", "1", " "],
-    [" ", "1", "1", " ", " ", "1", "1", " "],
-    [" ", " ", " ", "1", "1", " ", " ", " "],
-    [" ", " ", "a", "1", "1", "a", " ", " "],
-    [" ", " ", "a", " ", " ", "a", " ", " "],
+    ["1", "t", "1", "1", " ", " ", "1", "1", "t", "1"],
+    ["1", " ", "1", "1", " ", " ", "1", "1", " ", "1"],
+    ["1", " ", " ", " ", "3", "3", " ", " ", " ", "1"],
+    ["1", " ", " ", "s", "2", "2", "s", " ", " ", "1"],
+    ["w", "t", " ", "a", " ", " ", "a", " ", "t", "w"],
 ]
 
 
@@ -24,6 +26,7 @@ class Game(Atom):
         self.entities = []
         self.balls = [Ball(const.SCREEN_WIDTH / 3)]
         self.bar = Bar()
+        self.window = []
 
         self.addEventListener("ballDeath", self.__ballDeathEventHandler)
         self.addEventListener("gameOver", self.__gameOverEventHandler)
@@ -35,8 +38,11 @@ class Game(Atom):
     # Initialize Game
     # Execute In setup() Function
     def init(self):
-        frameRate(10)
+        frameRate(60)
         self.blocks = createBlockMapByMap(blockMap)
+
+        # debugWindow = Window("title")
+        # self.window = [debugWindow]
 
     # Move & Calc & Draw Object
     # Execute In draw() Function
@@ -44,17 +50,19 @@ class Game(Atom):
         self.__move()
         self.__calc()
         self.__drawFrame()
-        self.__drawHitbox()
+
+        # self.__DEBUG_drawHitbox()
 
     # Draw Object, Entity
     def __drawFrame(self):
-        background(255)
+        background("#030510")
         map(lambda brick: brick.draw(), self.blocks)
         map(lambda ball: ball.draw(), self.balls)
         map(lambda entity: entity.draw(), self.entities)
+        map(lambda window: window.draw(), self.window)
         self.bar.draw()
 
-    def __drawHitbox(self):
+    def __DEBUG_drawHitbox(self):
         map(lambda brick: brick.drawHitbox(), self.blocks)
         map(lambda ball: ball.drawHitbox(), self.balls)
         map(lambda entity: entity.drawHitbox(), self.entities)
@@ -83,7 +91,7 @@ class Game(Atom):
             # Entity - Bar Collision
             Object.collision(self.game, entity, self.bar)
 
-    # Event Handler
+    #### [ Event Handler ] ####
     def __ballDeathEventHandler(self, event):
         self.balls.remove(event.object)
         if len(self.balls) == 0:
