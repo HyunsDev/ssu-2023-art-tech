@@ -18,6 +18,7 @@ class Bar(Entity):
 
     def draw(self):
         fill("#3A79C4")
+        strokeWeight(0)
         rect(self.x, self.y, self.width, 5)
 
     def move(self):

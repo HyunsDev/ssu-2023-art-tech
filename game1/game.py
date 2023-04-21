@@ -51,7 +51,7 @@ class Game(Atom):
         self.__calc()
         self.__drawFrame()
 
-        # self.__DEBUG_drawHitbox()
+        self.__DEBUG_drawHitbox()
 
     # Draw Object, Entity
     def __drawFrame(self):

@@ -29,6 +29,11 @@ class Brick(Block):
         stroke(0)
         rect(self.x, self.y, self.width, self.height)
 
+        if const.DEBUG_MODE:
+            fill("#ff0000")
+            textAlign(CENTER, CENTER)
+            text(self.life, self.x + self.width / 2, self.y + self.height / 2)
+
     def _collisionEventHandler(self, event):
         if event.object.__class__.__name__ == "Ball":
             self.life -= 1
