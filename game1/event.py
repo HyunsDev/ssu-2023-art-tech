@@ -26,7 +26,7 @@ class BallCreatedEvent(Event):
 
 
 class BarSizeUpEvent(Event):
-    def __init__(self, bar):
+    def __init__(self):
         self.type = "barSizeUp"
 
 
@@ -67,7 +67,24 @@ class MouseClickEvent(Event):
         self.y = y
 
 
+class KeyboardPressEvent(Event):
+    def __init__(self, key):
+        self.type = "keyboardPress"
+        self.key = key
+
+
 class ItemCreatedEvent(Event):
     def __init__(self, item):
         self.type = "itemCreated"
         self.item = item
+
+
+class getPointEvent(Event):
+    def __init__(self, point):
+        self.type = "getPoint"
+        self.point = point
+
+
+class godModeEvent(Event):
+    def __init__(self):
+        self.type = "godMode"

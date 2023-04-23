@@ -13,3 +13,6 @@ def draw():
 
 def mousePressed():
     game.mousePressEvent(mouseX, mouseY)
+
+def keyPressed():
+    game.keyboardPressEvent(key)

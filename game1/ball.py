@@ -25,11 +25,15 @@ class Ball(Entity):
         self.width = self.size
         self.height = self.size
 
+        self.isGotMode = False
+        self.gotModeTimer = None
+
         self.trajectories = []
 
         self.addEventListener(
             "collision", lambda event: self.__collisionEventHandler(event)
         )
+        self.game.addEventListener("godMode", self.__godModeEventHandler)
 
     def draw(self):
         # Draw Trajectory
@@ -37,7 +41,12 @@ class Ball(Entity):
         strokeWeight(self.width)
         beforeTrajectory = (self.x, self.y)
         for i, trajectory in enumerate(self.trajectories):
-            c = color(58, 121, 196, 255 / (i + 1))
+            c = None
+            if self.isGotMode:
+                c = color(255, 255, 0, 255 / (i + 1))
+            else:
+                c = color(58, 121, 196, 255 / (i + 1))
+
             stroke(c)
 
             line(
@@ -49,8 +58,12 @@ class Ball(Entity):
             beforeTrajectory = trajectory
 
         # Draw Ball
-        fill("#10223E")
-        stroke("#3A79C4")
+        if self.isGotMode:
+            fill("#ffff00")
+            stroke("#ffff00")
+        else:
+            fill("#10223E")
+            stroke("#3A79C4")
         strokeWeight(1)
         ellipse(
             self.x + self.width / 2, self.y + self.height / 2, self.width, self.height
@@ -78,7 +91,7 @@ class Ball(Entity):
     def __collisionEventHandler(self, event):
         if event.direction == None:
             return
-        if isinstance(event.targetObject, (Block,)):
+        if isinstance(event.targetObject, (Block,)) and not self.isGotMode:
             if event.direction == "left":
                 self.ax = abs(self.ax) * -1
             if event.direction == "right":
@@ -101,3 +114,14 @@ class Ball(Entity):
             if event.direction != "bottom":
                 self.ax = self.ball_speed * math.sin(math.radians(degree)) * direction
                 self.ay = abs(self.ball_speed * math.cos(math.radians(degree))) * -1
+
+    def __godModeEventHandler(self, event):
+        def endGotMode():
+            self.isGotMode = False
+            self.gotModeTimer = None
+
+        self.isGotMode = True
+        if self.gotModeTimer:
+            self.clearTimeout(self.gotModeTimer)
+
+        self.gotModeTimer = self.setTimeout(endGotMode, 5)

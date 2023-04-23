@@ -8,6 +8,7 @@ class Atom(object):
 
     def __init__(self, game=None):
         self.eventListener = {}
+        self.timer = {}
 
         if game:
             Atom.game = game
@@ -32,3 +33,9 @@ class Atom(object):
     def removeEventListener(self, type, cb):
         if type in self.eventListener:
             self.eventListener[type].remove(cb)
+
+    def setTimeout(self, cb, delay=1):
+        return self.game.gameTimer.setTimeout(cb, delay)
+
+    def clearTimeout(self, symbol):
+        return self.game.gameTimer.clearTimeout(symbol)

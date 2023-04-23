@@ -1,5 +1,5 @@
 from object import Block
-from event import BrickDeathEvent, ItemCreatedEvent, BoomEvent
+from event import BrickDeathEvent, ItemCreatedEvent, BoomEvent, getPointEvent
 from item import AddBallItem, BarSizeUpItem
 from ball import Ball
 import const
@@ -31,14 +31,16 @@ class Brick(Block):
 
         if const.DEBUG_MODE:
             fill("#ff0000")
+            textSize(16)
             textAlign(CENTER, CENTER)
             text(self.life, self.x + self.width / 2, self.y + self.height / 2)
 
     def _collisionEventHandler(self, event):
-        if event.object.__class__.__name__ == "Ball":
+        if event.object.canBreakBlock:
             self.life -= 1
             if self.life <= 0:
                 self.game.dispatchEvent(BrickDeathEvent(self))
+                self.game.dispatchEvent(getPointEvent(10))
 
 
 class ItemBrick(Brick):
@@ -62,11 +64,17 @@ class ItemBrick(Brick):
         rect(self.x, self.y, self.width, self.height)
 
     def _collisionEventHandler(self, event):
-        if event.object.__class__.__name__ == "Ball":
+        if event.object.canBreakBlock:
             self.life -= 1
             if self.life <= 0:
                 self.game.dispatchEvent(ItemCreatedEvent(self.item))
                 self.game.dispatchEvent(BrickDeathEvent(self))
+                self.game.dispatchEvent(getPointEvent(10))
+
+                self.setTimeout(self.p, 3)
+
+    def p(self):
+        print("Hello!!")
 
 
 class Wall(Block):
@@ -93,9 +101,17 @@ class TntBrick(Brick):
         fill("#ff0000")
         rect(self.x, self.y, self.width, self.height)
 
+        img = loadImage("image/at-tnt.png")
+        image(
+            img, (self.x + self.width / 2) - 50 / 2, (self.y + self.height / 2) - 50 / 2
+        )
+
     def _collisionEventHandler(self, event):
-        if event.object.__class__.__name__ == "Ball":
+        if event.object.canBreakBlock:
             self.life -= 1
             if self.life <= 0:
                 self.game.dispatchEvent(BrickDeathEvent(self))
-                self.game.dispatchEvent(BoomEvent(self.x, self.y, 50))
+                self.game.dispatchEvent(
+                    BoomEvent(self.x + self.width / 2, self.y + self.height / 2, 200)
+                )
+                self.game.dispatchEvent(getPointEvent(10))

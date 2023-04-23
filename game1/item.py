@@ -1,6 +1,6 @@
 import const
 from object import Entity
-from event import BallCreatedEvent, ItemUsedEvent, BarSizeUpEvent
+from event import BallCreatedEvent, ItemUsedEvent, BarSizeUpEvent, godModeEvent
 from bar import Bar
 from ball import Ball
 
@@ -9,6 +9,7 @@ class Item(Entity):
     def __init__(self, x, y, speed=5, width=50, height=50, **kwargs):
         super(Item, self).__init__(x, y, width, height, **kwargs)
         self.speed = speed
+        self.canBreakBlock = False
         pass
 
     def draw(self):
@@ -34,10 +35,9 @@ class AddBallItem(Item):
         if event.direction == None:
             return
         if isinstance(event.targetObject, (Bar,)):
-            if event.direction == "bottom":
-                ball = Ball()
-                self.game.dispatchEvent(BallCreatedEvent(ball))
-                self.game.dispatchEvent(ItemUsedEvent(self))
+            ball = Ball()
+            self.game.dispatchEvent(BallCreatedEvent(ball))
+            self.game.dispatchEvent(ItemUsedEvent(self))
 
 
 class BarSizeUpItem(Item):
@@ -55,7 +55,24 @@ class BarSizeUpItem(Item):
         if event.direction == None:
             return
         if isinstance(event.targetObject, (Bar,)):
-            if event.direction == "bottom":
-                ball = Ball()
-                self.game.dispatchEvent(BarSizeUpEvent(ball))
-                self.game.dispatchEvent(ItemUsedEvent(self))
+            self.game.dispatchEvent(BarSizeUpEvent())
+            self.game.dispatchEvent(ItemUsedEvent(self))
+
+
+class GodBallItem(Item):
+    def __init__(self, x, y, speed=5, width=50, height=50, **kwargs):
+        super(GodBallItem, self).__init__(x, y, speed, width, height, **kwargs)
+        self.addEventListener("collision", self._collisionEventHandler)
+
+    def draw(self):
+        # fill("#000000")
+        # rect(self.x, self.y, self.width, self.height)
+        img = loadImage("image/at-godBallItem.png")
+        image(img, self.x, self.y)
+
+    def _collisionEventHandler(self, event):
+        if event.direction == None:
+            return
+        if isinstance(event.targetObject, (Bar,)):
+            self.game.dispatchEvent(godModeEvent())
+            self.game.dispatchEvent(ItemUsedEvent(self))

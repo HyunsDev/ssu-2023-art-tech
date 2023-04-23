@@ -1,6 +1,6 @@
 from object import Block
 from event import BrickDeathEvent, ItemCreatedEvent
-from item import AddBallItem, BarSizeUpItem
+from item import AddBallItem, BarSizeUpItem, GodBallItem
 from ball import Ball
 from brick import Brick, ItemBrick, Wall, TntBrick
 import const
@@ -85,6 +85,17 @@ def createBlockMapByMap(map):
 
             elif rawBrick == "s":  # ItemBrick (item: addBall)
                 item = BarSizeUpItem(x=ii * block_width, y=i * block_height)
+                block = ItemBrick(
+                    x=ii * block_width,
+                    y=i * block_height,
+                    width=block_width,
+                    height=block_height,
+                    item=item,
+                )
+                blocks.append(block)
+
+            elif rawBrick == "g":  # ItemBrick (item: GodBall)
+                item = GodBallItem(x=ii * block_width, y=i * block_height)
                 block = ItemBrick(
                     x=ii * block_width,
                     y=i * block_height,

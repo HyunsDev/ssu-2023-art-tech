@@ -114,9 +114,12 @@ class Object(Atom):
 
 # Abstract Class
 class Block(Object):
-    pass
+    def __init__(self, *args, **kwargs):
+        super(Block, self).__init__(*args, **kwargs)
 
 
 # Abstract Class
 class Entity(Object):
-    pass
+    def __init__(self, *args, **kwargs):
+        super(Entity, self).__init__(*args, **kwargs)
+        self.canBreakBlock = True
