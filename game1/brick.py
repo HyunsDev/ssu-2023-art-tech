@@ -29,7 +29,7 @@ class Brick(Block):
         stroke(0)
         rect(self.x, self.y, self.width, self.height)
 
-        if const.DEBUG_MODE:
+        if const.DEBUG_OVERLAY_MODE:
             fill("#ff0000")
             textSize(16)
             textAlign(CENTER, CENTER)
@@ -62,6 +62,9 @@ class ItemBrick(Brick):
         stroke(c)
 
         rect(self.x, self.y, self.width, self.height)
+
+        img = loadImage(self.item.image)
+        image(img, (self.x + self.width / 2) - 25, (self.y + self.height / 2) - 25)
 
     def _collisionEventHandler(self, event):
         if event.object.canBreakBlock:

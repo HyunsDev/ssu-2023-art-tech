@@ -5,6 +5,13 @@ import math
 from event import BallDeathEvent
 
 
+def getAngle(x1, y1, x2, y2):
+    dx = x2 - x1
+    dy = y2 - y1
+    angle = math.atan2(dy, dx)
+    return math.degrees(angle)
+
+
 class Ball(Entity):
     def __init__(
         self,
@@ -34,28 +41,31 @@ class Ball(Entity):
             "collision", lambda event: self.__collisionEventHandler(event)
         )
         self.game.addEventListener("godMode", self.__godModeEventHandler)
+        self.game.addEventListener("shotBall", self.__shotBallEventHandler)
 
     def draw(self):
         # Draw Trajectory
         # c = color()
-        strokeWeight(self.width)
-        beforeTrajectory = (self.x, self.y)
-        for i, trajectory in enumerate(self.trajectories):
-            c = None
-            if self.isGotMode:
-                c = color(255, 255, 0, 255 / (i + 1))
-            else:
-                c = color(58, 121, 196, 255 / (i + 1))
 
-            stroke(c)
+        if not self.game.isShotMode:
+            strokeWeight(self.width)
+            beforeTrajectory = (self.x, self.y)
+            for i, trajectory in enumerate(self.trajectories):
+                c = None
+                if self.isGotMode:
+                    c = color(255, 255, 0, 255 / (i + 1))
+                else:
+                    c = color(58, 121, 196, 255 / (i + 1))
 
-            line(
-                trajectory[0] + self.size / 2,
-                trajectory[1] + self.size / 2,
-                beforeTrajectory[0] + self.size / 2,
-                beforeTrajectory[1] + self.size / 2,
-            )
-            beforeTrajectory = trajectory
+                stroke(c)
+
+                line(
+                    trajectory[0] + self.size / 2,
+                    trajectory[1] + self.size / 2,
+                    beforeTrajectory[0] + self.size / 2,
+                    beforeTrajectory[1] + self.size / 2,
+                )
+                beforeTrajectory = trajectory
 
         # Draw Ball
         if self.isGotMode:
@@ -68,6 +78,12 @@ class Ball(Entity):
         ellipse(
             self.x + self.width / 2, self.y + self.height / 2, self.width, self.height
         )
+
+        if self.game.isShotMode:
+            strokeWeight(4)
+            c = color(58, 121, 196, 80)
+            stroke(c)
+            line(self.x + self.width / 2, self.y + self.height / 2, mouseX, mouseY)
 
     def move(self):
         self.x += self.ax
@@ -125,3 +141,9 @@ class Ball(Entity):
             self.clearTimeout(self.gotModeTimer)
 
         self.gotModeTimer = self.setTimeout(endGotMode, 5)
+
+    def __shotBallEventHandler(self, event):
+        degree = getAngle(self.x, self.y, event.x, event.y)
+        self.ax = self.ball_speed * math.cos(math.radians(degree))
+        self.ay = self.ball_speed * math.sin(math.radians(degree))
+        self.trajectories = []

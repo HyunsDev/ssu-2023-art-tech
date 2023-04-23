@@ -4,21 +4,17 @@ from ball import Ball
 from brick import Brick
 from object import Object
 from atom import Atom
-from event import GameOverEvent, MouseClickEvent, KeyboardPressEvent
+from event import (
+    GameOverEvent,
+    MouseClickEvent,
+    KeyboardPressEvent,
+    ShotBallEvent,
+    ShotBallStartEvent,
+)
 from window import Window
 from mapLoader import createBlockMapByMap
 from gameTimer import GameTimer
 from boom import Boom
-
-
-blockMap = [
-    [" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
-    ["1", "2", "t", "3", "3", " ", " ", "3", "3", "t", "1", "1"],
-    ["1", "1", " ", "3", "3", " ", " ", "3", "3", " ", "1", "1"],
-    ["t", "1", " ", " ", " ", "3", "3", " ", " ", " ", "1", "t"],
-    ["1", "1", " ", " ", "s", "2", "2", "s", " ", " ", "1", "1"],
-    ["g", "w", "t", " ", "a", " ", " ", "a", " ", "t", "w", "g"],
-]
 
 
 class Game(Atom):
@@ -29,6 +25,7 @@ class Game(Atom):
         self.point = 0
         self.isGameOver = False
         self.isShowGameOverScreen = False
+        self.isShotMode = False
 
         self.gameTimer = GameTimer()
 
@@ -49,6 +46,7 @@ class Game(Atom):
         self.addEventListener("keyboardPress", self.__keyboardPressEventHandler)
         self.addEventListener("collision", self.__collisionEventHandler)
         self.addEventListener("mouseClick", self.__mouseClickEventHandler)
+        self.addEventListener("shotBallStart", self.__shotBallStartEventHandler)
 
     # Initialize Game
     # Execute In setup() Function and Reset Game
@@ -57,7 +55,7 @@ class Game(Atom):
         self.point = 0
         self.isGameOver = False
         self.isShowGameOverScreen = False
-        self.blocks = createBlockMapByMap(blockMap)
+        self.blocks = createBlockMapByMap(const.MAP)
         self.entities = []
         self.balls = [Ball(const.SCREEN_WIDTH / 3)]
         self.bar = Bar()
@@ -69,12 +67,13 @@ class Game(Atom):
     # Move & Calc & Draw Object
     # Execute In draw() Function
     def draw(self):
-        self.gameTimer.tick()
+        if not self.isShotMode:
+            self.gameTimer.tick()
         self.__move()
         self.__calc()
         self.__drawFrame()
 
-        if const.DEBUG_MODE:
+        if const.DEBUG_OVERLAY_MODE:
             self.__DEBUG_drawHitbox()
             self.__DEBUG_frameRate()
 
@@ -104,6 +103,10 @@ class Game(Atom):
         if self.isShowGameOverScreen:
             self.__gameOverScreen()
 
+        if self.isShotMode:
+            img = loadImage("image/at-shot-cursor.png")
+            image(img, mouseX - 25, mouseY - 25)
+
     def __gameOverScreen(self):
         background("#030510")
 
@@ -129,10 +132,10 @@ class Game(Atom):
 
     # Move Object
     def __move(self):
-        # self.balls.move()
-        map(lambda ball: ball.move(), self.balls)
-        map(lambda entity: entity.move(), self.entities)
-        self.bar.move()
+        if not self.isShotMode:
+            map(lambda ball: ball.move(), self.balls)
+            map(lambda entity: entity.move(), self.entities)
+            self.bar.move()
 
     # Collision Detection
     def __calc(self):
@@ -181,7 +184,8 @@ class Game(Atom):
         self.entities.append(event.item)
 
     def __ballCreatedEventHandler(self, event):
-        self.balls.append(event.ball)
+        ball = Ball()
+        self.balls.append(ball)
 
     def __itemUsedEventHandler(self, event):
         self.entities.remove(event.item)
@@ -193,9 +197,15 @@ class Game(Atom):
         boom = Boom(event.x, event.y, event.size)
         self.entities.append(boom)
 
+    def __shotBallStartEventHandler(self, event):
+        self.isShotMode = True
+
     def __keyboardPressEventHandler(self, event):
-        if event.key == " ":
+        if event.key == "d":
             const.DEBUG_MODE = not const.DEBUG_MODE
+
+        if event.key == "o":
+            const.DEBUG_OVERLAY_MODE = not const.DEBUG_OVERLAY_MODE
 
         if self.isShowGameOverScreen:
             self.init()
@@ -203,6 +213,10 @@ class Game(Atom):
     def __mouseClickEventHandler(self, event):
         if self.isShowGameOverScreen:
             self.init()
+
+        if self.isShotMode:
+            self.isShotMode = False
+            self.game.dispatchEvent(ShotBallEvent(event.x, event.y))
 
     # Outer Event
     def mousePressEvent(self, x, y):

@@ -21,11 +21,10 @@ class GameTimer:
             "isInterval": False,
         }
 
-        print("Timer", self.__timers)
         return symbol
 
     def clearTimeout(self, symbol):
-        del self.__timers[synbol]
+        del self.__timers[symbol]
 
     def tick(self):
         for symbol in self.__timers:

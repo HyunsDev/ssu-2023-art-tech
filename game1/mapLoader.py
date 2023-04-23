@@ -1,6 +1,6 @@
 from object import Block
 from event import BrickDeathEvent, ItemCreatedEvent
-from item import AddBallItem, BarSizeUpItem, GodBallItem
+from item import AddBallItem, BarSizeUpItem, GodBallItem, ShotBallItem
 from ball import Ball
 from brick import Brick, ItemBrick, Wall, TntBrick
 import const
@@ -8,7 +8,7 @@ import const
 
 def createBlockMapByMap(map):
     block_width = const.SCREEN_WIDTH / len(map[0])
-    block_height = const.SCREEN_HEIGHT / len(map) / 2
+    block_height = const.SCREEN_HEIGHT / len(map) / 3 * 2
     blocks = []
     for i, mapRow in enumerate(map):
         for ii, rawBrick in enumerate(mapRow):
@@ -96,6 +96,17 @@ def createBlockMapByMap(map):
 
             elif rawBrick == "g":  # ItemBrick (item: GodBall)
                 item = GodBallItem(x=ii * block_width, y=i * block_height)
+                block = ItemBrick(
+                    x=ii * block_width,
+                    y=i * block_height,
+                    width=block_width,
+                    height=block_height,
+                    item=item,
+                )
+                blocks.append(block)
+
+            elif rawBrick == "o":  # ItemBrick (item: ShotBall)
+                item = ShotBallItem(x=ii * block_width, y=i * block_height)
                 block = ItemBrick(
                     x=ii * block_width,
                     y=i * block_height,

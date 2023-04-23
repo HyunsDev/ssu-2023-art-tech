@@ -20,9 +20,8 @@ class BallDeathEvent(Event):
 
 
 class BallCreatedEvent(Event):
-    def __init__(self, ball):
+    def __init__(self):
         self.type = "ballCreated"
-        self.ball = ball
 
 
 class BarSizeUpEvent(Event):
@@ -88,3 +87,15 @@ class getPointEvent(Event):
 class godModeEvent(Event):
     def __init__(self):
         self.type = "godMode"
+
+
+class ShotBallStartEvent(Event):
+    def __init__(self):
+        self.type = "shotBallStart"
+
+
+class ShotBallEvent(Event):
+    def __init__(self, x, y):
+        self.type = "shotBall"
+        self.x = x
+        self.y = y
