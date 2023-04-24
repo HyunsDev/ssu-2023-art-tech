@@ -12,9 +12,20 @@ from event import (
     ShotBallStartEvent,
 )
 from window import Window
-from mapLoader import createBlockMapByMap
+from mapLoader import createBlockMapByMap, rawMapDataParser
 from gameTimer import GameTimer
 from boom import Boom
+
+import subprocess
+
+defaultMap = const.MAP
+
+
+def getClipboardData():
+    p = subprocess.Popen(["pbpaste"], stdout=subprocess.PIPE)
+    retcode = p.wait()
+    content = p.stdout.read()
+    return content
 
 
 class Game(Atom):
@@ -27,6 +38,8 @@ class Game(Atom):
         self.isShowGameOverScreen = False
         self.isShotMode = False
 
+        self.isPause = False
+
         self.gameTimer = GameTimer()
 
         self.blocks = []
@@ -34,6 +47,9 @@ class Game(Atom):
         self.balls = [Ball(const.SCREEN_WIDTH / 3)]
         self.bar = Bar()
         self.window = []
+
+        self.textModal = None
+        self.modalTimer = None
 
         self.addEventListener("ballDeath", self.__ballDeathEventHandler)
         self.addEventListener("gameOver", self.__gameOverEventHandler)
@@ -50,12 +66,13 @@ class Game(Atom):
 
     # Initialize Game
     # Execute In setup() Function and Reset Game
-    def init(self):
+    def init(self, mapData=defaultMap):
         frameRate(const.FRAME_RATE)
         self.point = 0
         self.isGameOver = False
         self.isShowGameOverScreen = False
-        self.blocks = createBlockMapByMap(const.MAP)
+        self.isShotMode = False
+        self.blocks = createBlockMapByMap(mapData)
         self.entities = []
         self.balls = [Ball(const.SCREEN_WIDTH / 3)]
         self.bar = Bar()
@@ -67,10 +84,11 @@ class Game(Atom):
     # Move & Calc & Draw Object
     # Execute In draw() Function
     def draw(self):
-        if not self.isShotMode:
-            self.gameTimer.tick()
-        self.__move()
-        self.__calc()
+        if not self.isPause:
+            if not self.isShotMode:
+                self.gameTimer.tick()
+            self.__move()
+            self.__calc()
         self.__drawFrame()
 
         if const.DEBUG_OVERLAY_MODE:
@@ -106,6 +124,33 @@ class Game(Atom):
         if self.isShotMode:
             img = loadImage("image/at-shot-cursor.png")
             image(img, mouseX - 25, mouseY - 25)
+
+        if self.isPause:
+            fill(color(0, 0, 0, 100))
+            rect(0, 0, const.SCREEN_WIDTH, const.SCREEN_HEIGHT)
+
+            fill(color(255, 255, 255, 255))
+            textSize(100)
+            textAlign(CENTER, CENTER)
+            text("PAUSE", width / 2, height / 2)
+
+        if self.textModal:
+            fill(color(255, 255, 255, 255))
+            textSize(20)
+            textAlign(CENTER, CENTER)
+            text(self.textModal, width / 2, height / 4 * 3)
+
+    def modal(self, text):
+        self.textModal = text
+
+        def closeModal():
+            self.textModal = ""
+            self.modalTimer = None
+
+        if self.modalTimer:
+            self.clearTimeout(self.modalTimer)
+
+        self.modalTimer = self.setTimeout(closeModal, 2)
 
     def __gameOverScreen(self):
         background("#030510")
@@ -157,6 +202,19 @@ class Game(Atom):
     def removeEntity(self, entity):
         self.entities.remove(entity)
 
+    def loadMapByClipboard(self):
+        data = getClipboardData()
+        mapData = rawMapDataParser(data)
+
+        if mapData:
+            self.init(mapData)
+            print("MAP LOAD")
+            self.modal("MAP LOAD SUCCESS")
+            self.isPause = True
+        else:
+            self.modal("MAP LOAD FAIL")
+            print("Load Fail")
+
     #### [ Event Handler ] ####
     def __ballDeathEventHandler(self, event):
         self.balls.remove(event.object)
@@ -206,6 +264,12 @@ class Game(Atom):
 
         if event.key == "o":
             const.DEBUG_OVERLAY_MODE = not const.DEBUG_OVERLAY_MODE
+
+        if event.key == "f":
+            self.loadMapByClipboard()
+
+        if event.key == " ":
+            self.isPause = not self.isPause
 
         if self.isShowGameOverScreen:
             self.init()

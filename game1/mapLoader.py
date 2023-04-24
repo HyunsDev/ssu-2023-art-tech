@@ -4,6 +4,7 @@ from item import AddBallItem, BarSizeUpItem, GodBallItem, ShotBallItem
 from ball import Ball
 from brick import Brick, ItemBrick, Wall, TntBrick
 import const
+import json
 
 
 def createBlockMapByMap(map):
@@ -117,3 +118,13 @@ def createBlockMapByMap(map):
                 blocks.append(block)
 
     return blocks
+
+
+def rawMapDataParser(data):
+    try:
+        _data = json.loads(data).get("map")
+        print(_data)
+        return _data
+    except:
+        print("Map Load Fail")
+        return None

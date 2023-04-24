@@ -4,11 +4,11 @@ from item import AddBallItem, BarSizeUpItem
 from ball import Ball
 import const
 
-
 class Brick(Block):
     def __init__(self, life=1, *args, **kwargs):
         super(Brick, self).__init__(*args, **kwargs)
         self.life = life
+        self.isCanBrick = True
 
         if self.__class__.__name__ == "Brick":
             self.addEventListener("collision", self._collisionEventHandler)
@@ -74,16 +74,12 @@ class ItemBrick(Brick):
                 self.game.dispatchEvent(BrickDeathEvent(self))
                 self.game.dispatchEvent(getPointEvent(10))
 
-                self.setTimeout(self.p, 3)
-
-    def p(self):
-        print("Hello!!")
-
 
 class Wall(Block):
     def __init__(self, *args, **kwargs):
         super(Wall, self).__init__(*args, **kwargs)
         self.color = "#ff0000"
+        self.isCanBrick = True
 
     def draw(self):
         strokeWeight(0)
