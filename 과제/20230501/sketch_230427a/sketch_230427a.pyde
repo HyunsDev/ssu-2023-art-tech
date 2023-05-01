@@ -24,7 +24,7 @@ Draw Animatied Sun
         4 change all option: sun_ParkHyunWoo(width - 100, 100, '#ff0000', False, 30)
         # 3 == 4
 """
-def sun_ParkHyunWoo(x, y, sunColor = '#FEEB61', isPlay = True, animationSpeed = 1):
+def sun_ParkHyunWoo(x, y, sunColor = '#FEEB61', isAnimationPlay = True, animationSpeed = 1):
     # Save the orginal Style
     pushStyle()
 
@@ -55,7 +55,7 @@ def sun_ParkHyunWoo(x, y, sunColor = '#FEEB61', isPlay = True, animationSpeed = 
         rectMode(CENTER)
         translate(x, y)
         
-        if isPlay:
+        if isAnimationPlay:
             rotate(PI/4*i + frameCount * PI/360 * animationSpeed)
         else:
             rotate(PI/4*i)
@@ -73,10 +73,6 @@ def setup():
     
 def draw():
     background('#ffffff')
-    sun_ParkHyunWoo(width - 100, 100, animationSpeed = 20)
-    sun_ParkHyunWoo(width - 100, height-100, sunColor = '#80FE61')
-    sun_ParkHyunWoo(100, height - 100, isPlay = False)
-    sun_ParkHyunWoo(100, 100)
     sun_ParkHyunWoo(width / 2, height / 2)
     
     pass
